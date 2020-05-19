@@ -4,17 +4,23 @@ import json
 Point = namedtuple('Point', ['x', 'y'])
 
 class StartBoardGenerator:
-    def __init__(self, file_name, square_face = 10):
+    def __init__(self, file_name, square_face = 15):
         self.square_face = square_face
         self.file_name = file_name
         self.board = set()
 
 
     def consInit(self):
+        self.square_face = int(input("Input square face: "))
         count = input("Input count of points: ")
         for _ in range(int(count)):
             x, y = input("x y: ").split()
             self.board.add(Point(x, y))
+
+
+    def showSelf(self):
+        print("Start seed")
+        print(self.board)
 
 
     def fileSave(self):
@@ -32,20 +38,24 @@ class StartBoardGenerator:
 
 
     def fileLoad(self):
-        f = open(self.file_name, 'r')
-        
-        jsonData = json.load(f)
+        try:
+            f = open(self.file_name, 'r')
+            
+            jsonData = json.load(f)
 
-        if 'Seed' not in jsonData:
+            if 'Seed' not in jsonData:
+                return False
+
+            js = jsonData['Seed']
+            self.square_face = js['Square face']
+            listData = js['Points']
+            for el in listData:
+                self.board.add(Point(el[0], el[1])) 
+
+            f.close()
+
+        except:
             return False
-
-        js = jsonData['Seed']
-        self.square_face = js['Square face']
-        listData = js['Points']
-        for el in listData:
-            self.board.add(Point(el[0], el[1])) 
-
-        f.close()
 
         return True
 
